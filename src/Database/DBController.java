@@ -1,15 +1,18 @@
 package Database;
 
+import Helpers.Checker;
 import ModelsEntities.BalanceManager;
 import ModelsEntities.User;
 import Utilities.DatabaseUtil;
 
 import java.sql.*;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class DBController extends BalanceManager {
-    private static String tablename1 = "";
+
     User user = new User();
+
 
     Scanner scanner = new Scanner(System.in);
 
@@ -17,7 +20,7 @@ public class DBController extends BalanceManager {
     public void printTable(String tablename) throws SQLException {
         Connection connection = DatabaseUtil.getConnection();
         Statement statement = connection.createStatement();
-        String sql = "Select * from " + tablename;
+        String sql = "Select * from " + tablename + " order by indexkey asc";
         ResultSet resultSet = statement.executeQuery(sql);
         ResultSetMetaData metaData = resultSet.getMetaData();
 
@@ -62,51 +65,62 @@ public class DBController extends BalanceManager {
 
 
     }
+    public void printOneDetail(String tablename,String indexkey) throws SQLException {
+
+        Connection connection = DatabaseUtil.getConnection();
+        Statement statement = connection.createStatement();
+        String buySql = "select * from " + tablename + " where indexkey= " + indexkey;
+        ResultSet resultSet = statement.executeQuery(buySql);
+        if(resultSet.next()){
+            System.out.println("————————————————————————————————————————————————————————————————————————————————");
+            System.out.println("|Model                 Quantity    price       Indexkey     Detail             |");
+            System.out.println("————————————————————————————————————————————————————————————————————————————————");
+            System.out.printf("|%-20s|", resultSet.getString("model"));
+            System.out.printf("%10d  |", resultSet.getInt("quantity"));
+            System.out.printf("%8.2f  |", resultSet.getDouble("price"));
+            System.out.printf("%10d|",resultSet.getInt("indexkey"));
+            System.out.printf("%-22s|", resultSet.getString("item"));
+            System.out.println();
+            System.out.println("————————————————————————————————————————————————————————————————————————————————");
+        }
+    }
 
     public void buyPanel(String tablename) throws SQLException {
         Connection connection = DatabaseUtil.getConnection();
         Statement statement = connection.createStatement();
-
-        System.out.println("Enter index:");
-        System.out.println("0.Back");
-        String choice = scanner.next();
-        if(choice.equals("0")){
-
+        Checker checker = new Checker();
+        if(checker.checkStatus()){
+            manageDatabaseMenu(tablename);
         }
         else{
-            String buySql = "select * from " + tablename + " where indexkey= " + choice;
-            ResultSet resultSet = statement.executeQuery(buySql);
-            if(resultSet.next()){
-                System.out.println("————————————————————————————————————————————————————————————————————————————————");
-                System.out.println("|Model                 Quantity    price       Indexkey     Detail             |");
-                System.out.println("————————————————————————————————————————————————————————————————————————————————");
-                System.out.printf("|%-20s|", resultSet.getString("model"));
-                System.out.printf("%10d  |", resultSet.getInt("quantity"));
-                System.out.printf("%8.2f  |", resultSet.getDouble("price"));
-                System.out.printf("%10d|",resultSet.getInt("indexkey"));
-                System.out.printf("%-22s|", resultSet.getString("item"));
-                System.out.println();
-                System.out.println("————————————————————————————————————————————————————————————————————————————————");
-            }
-            System.out.print("Balance:"); System.out.println(getBalance());
-            System.out.print("Price:"); System.out.println(getPrice(tablename,choice));
-            System.out.print("Are you sure you want to add this product to cart? y/n:");
-            String choice2 = scanner.next();
-
-            if(choice2.equals("y")){
-                System.out.println("————————————————————————————————————————————————————————————————————————————————");
-                addToCart(tablename,choice);
+            System.out.println("Enter index:");
+            System.out.println("0.Back");
+            String choice = scanner.next();
+            if(choice.equals("0")){
 
             }
             else{
-                System.out.println("————————————————————————————————————————————————————————————————————————————————");
+                printOneDetail(tablename,choice);
+                System.out.print("Balance:"); System.out.println(getBalance());
+                System.out.print("Price:"); System.out.println(getPrice(tablename,choice));
+                System.out.print("Are you sure you want to add this product to cart? y/n:");
+                String choice2 = scanner.next();
+
+                if(choice2.equals("y")){
+                    System.out.println("————————————————————————————————————————————————————————————————————————————————");
+                    addToCart(tablename,choice);
+
+                }
+                else{
+                    System.out.println("————————————————————————————————————————————————————————————————————————————————");
+                }
+
+
+
+                statement.close();
+                connection.close();
+
             }
-
-
-            resultSet.close();
-            statement.close();
-            connection.close();
-
         }
     }
     public void addToCart(String tablename,String choice) throws SQLException {
@@ -156,6 +170,108 @@ public class DBController extends BalanceManager {
         String clearSQL = "truncate table cart";
         statement.executeUpdate(clearSQL);
     }
+
+
+    public void manageDatabaseMenu(String tablename) throws SQLException {
+        System.out.println("————————————————————————————————————————————————————————————————————————————————");
+        System.out.println("0.Back");
+        System.out.println("1.Add a spare part");
+        System.out.println("2.Change quantity");
+        System.out.println("3.Change price");
+        System.out.println("————————————————————————————————————————————————————————————————————————————————");
+        System.out.print("Enter option:");
+        int choice = scanner.nextInt();
+
+        if (choice == 2){
+            changeQuantity(tablename);
+        }
+        else if(choice == 3){
+            changePrice(tablename);
+        } else if (choice == 1) {
+            addSparePart(tablename);
+        }
+        else if(choice == 0){
+            System.out.println();
+        }
+        else{
+            System.out.println("Wrong option. Try again!");
+            manageDatabaseMenu(tablename);
+        }
+    }
+
+    public void changeQuantity(String tablename) throws SQLException {
+        System.out.println("0.Back");
+        System.out.print("Index:");
+        String index = scanner.next();
+        if(index.equals("0")){}
+        else{
+            printOneDetail(tablename,index);
+            System.out.print("Enter quantity:");
+            String quantity = scanner.next();
+            if(quantity.matches("^\\d+$")){
+                Connection connection = DatabaseUtil.getConnection();
+                String sql = "update " + tablename + " set quantity =" + quantity + " where indexkey=" + index ;
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.executeUpdate();
+                System.out.println("Successfull");
+                preparedStatement.close();
+                connection.close();
+            }
+            else{
+                System.out.println("Wrong index.Try again");
+                System.out.println("————————————————————————————————————————————————————————————————————————————————");
+            }
+
+        }
+
+    }
+    public void changePrice(String tablename) throws SQLException {
+        System.out.println("0.Back");
+        System.out.print("Index:");
+        String index = scanner.next();
+        if (index.equals("0")){}
+        else{
+            printOneDetail(tablename,index);
+            System.out.print("Enter price:");
+            String price = scanner.next();
+            if(price.matches("^\\d+$")){
+                Connection connection = DatabaseUtil.getConnection();
+                String sql = "update " + tablename + " set quantity =" + price + " where indexkey=" + index ;
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.executeUpdate();
+
+                System.out.println("Successfull");
+                System.out.println("————————————————————————————————————————————————————————————————————————————————");
+                preparedStatement.close();
+                connection.close();
+            }
+            else{
+                System.out.println("Wrong index.Try again");
+                System.out.println("————————————————————————————————————————————————————————————————————————————————");
+            }
+        }
+
+    }
+    public void addSparePart(String tablename) throws SQLException {
+        System.out.print("Print model:"); String modell = scanner.next();
+        System.out.print("Print quantity:"); String quantityy = scanner.next();
+        System.out.print("Print price:"); String pricee = scanner.next();
+        System.out.print("Create indexkey:"); String indexkeyy = scanner.next();
+        System.out.print("Print detailname:"); String itemm = scanner.next();
+        String sql = "insert into "+tablename+" (model,quantity,price,indexkey,item) values ('" + modell + "'," + quantityy+","+pricee+","+indexkeyy+",'"+itemm+"');";
+        Connection connection = DatabaseUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.executeUpdate();
+        System.out.println("Added succesfully!");
+        System.out.println("————————————————————————————————————————————————————————————————————————————————");
+        connection.close();
+        preparedStatement.close();
+        printTable(tablename);
+
+
+    }
+
+
 
 
 

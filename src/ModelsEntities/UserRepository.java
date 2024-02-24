@@ -87,19 +87,27 @@ public class UserRepository extends User {
                     String em = resultSet.getString("useremail");
                     String pass = resultSet.getString("userpass");
                     if (emailInput.equals(em) && passwordInput.equals(pass)) {
-                        loginSuccess = true;
                         setId(emailInput);
-                        break;
+                        Checker checker = new Checker();
+
+                        if(checker.checkStatus()){
+                            System.out.println("Hello admin Mr Daulet!!!");
+                            break;
+                        }
+                        else{
+                            System.out.println("Login successful");
+                            System.out.println("————————————————————————————————————————————————————————————————————————————————");
+
+                            break;
+                        }
+
+                    }
+                    else{
+                        System.out.println("Login failed, try again");
                     }
 
                 }
-                if (loginSuccess) {
-                    System.out.println("Login successful");
-                    System.out.println("————————————————————————————————————————————————————————————————————————————————");
-                    break;}
-                else {
-                    System.out.println("Login failed, try again");
-                }
+
             }
         }
         else if (response1.equals("register")){

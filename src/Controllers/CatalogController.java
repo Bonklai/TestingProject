@@ -13,6 +13,7 @@ public class CatalogController extends DBController {
 
     public void startCatalog() throws SQLException {
         System.out.println("————————————————————————————————————————————————————————————————————————————————");
+        System.out.println("0.Back");
         System.out.println("1.Batteries for iPhone");
         System.out.println("2.Display for iPhone");
         System.out.println("3.Glass for iPhone");
@@ -59,8 +60,12 @@ public class CatalogController extends DBController {
         else if(option == 9){
             printTable("keyboardsformacbook");
         }
-        else if(option == 0 && accessAdmin ){
-
+        else if(option == 0){
+            System.out.println("————————————————————————————————————————————————————————————————————————————————");
+        }
+        else if(option!=0){
+            System.out.println("Wrong option. Try again!");
+            startCatalog();
         }
     }
 }
