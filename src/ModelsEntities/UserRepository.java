@@ -1,8 +1,8 @@
 package ModelsEntities;
 
-import Applications.ApplicationMain;
 import Controllers.CartCreate;
-import Helpers.Checker;
+import Helpers.CheckStatus;
+import Helpers.CheckerRegister;
 import Utilities.DatabaseUtil;
 
 import java.sql.*;
@@ -55,9 +55,11 @@ public class UserRepository extends User {
     public void deleteUser() throws SQLException {
         Connection conn = DatabaseUtil.getConnection();
         String sql2 = "Delete from userinfo where iduser = '" + getId() + "'";
+        String sql3 = "Drop table cart"+getId() + " cascade;";
         truncateTempId();
         Statement statement = conn.createStatement();
         statement.execute(sql2);
+        statement.execute(sql3);
 
         System.out.println("User deleted successfully!");
         System.out.println("————————————————————————————————————————————————————————————————————————————————");
@@ -88,9 +90,9 @@ public class UserRepository extends User {
                     String pass = resultSet.getString("userpass");
                     if (emailInput.equals(em) && passwordInput.equals(pass)) {
                         setId(emailInput);
-                        Checker checker = new Checker();
+                        CheckStatus checkStatus = new CheckStatus();
 
-                        if(checker.checkStatus()){
+                        if(checkStatus.checkStatus()){
                             System.out.println("Hello admin Mr Daulet!!!");
                             break;
                         }
@@ -112,10 +114,10 @@ public class UserRepository extends User {
         }
         else if (response1.equals("register")){
             CartCreate cartCreate = new CartCreate();
-            Checker checker = new Checker();
+            CheckStatus checkStatus = new CheckStatus();
 
             reg();
-            if(!checker.checkStatus()){
+            if(!checkStatus.checkStatus()){
                 cartCreate.cartCreate();
             }
 
@@ -125,35 +127,6 @@ public class UserRepository extends User {
             System.out.println("Wrong option try again");
             login();
         }
-
-    }
-    public void printProfile() throws SQLException {
-        String sql3 = "select * from userinfo where iduser = '" + getId() + "'";
-        Connection connection = DatabaseUtil.getConnection();
-        PreparedStatement preparedStatement3 = connection.prepareStatement(sql3);
-        ResultSet resultSet3 = preparedStatement3.executeQuery();
-        while (resultSet3.next()){
-            String name = resultSet3.getString("username");
-            String surname = resultSet3.getString("surname");
-            String email = resultSet3.getString("useremail");
-            int age = resultSet3.getInt("age");
-            String city = resultSet3.getString("city");
-            String address = resultSet3.getString("address");
-            int postindex = resultSet3.getInt("postindex");
-
-
-            System.out.println("————————————————————————————————————————————————————————————————————————————————");
-            System.out.println("|Name:"+ name);
-            System.out.println("|Surname:" + surname);
-            System.out.println("|Email:"+email);
-            System.out.println("|Age: "+age);
-            System.out.println("|City:"+city);
-            System.out.println("|Address:"+address);
-            System.out.println("|PostIndex:"+ postindex);
-            System.out.println("————————————————————————————————————————————————————————————————————————————————");
-        }
-        connection.close();
-        preparedStatement3.close();
 
     }
 

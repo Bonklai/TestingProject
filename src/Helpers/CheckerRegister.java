@@ -8,10 +8,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import ModelsEntities.User;
 
-public class Checker extends User {
+public class CheckerRegister implements Checker {
 
-    public Checker(){
+    public CheckerRegister(){
     }
+    User user = new User();
 
     public boolean checkRegister() throws SQLException {
         Connection connection = DatabaseUtil.getConnection();
@@ -30,31 +31,15 @@ public class Checker extends User {
         return false;
     }
 
+    @Override
     public boolean checkDelivery() throws SQLException {
-        Connection connection = DatabaseUtil.getConnection();
-        String sql = "Select regdelivery from userinfo";
-        Statement statement = connection.createStatement();
-        ResultSet resultSet =statement.executeQuery(sql);
-        if(resultSet.next()){
-            boolean temp = resultSet.getBoolean("regdelivery");
-            if(!temp) return false;
-            else return true;
-        }
         return false;
     }
+
+    @Override
     public boolean checkStatus() throws SQLException {
-        Connection connection = DatabaseUtil.getConnection();
-        String sql = "select stat from userinfo where iduser = '" + getId() + "'";
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql);
-        boolean isTrue = false;
-        if(resultSet.next()){
-            isTrue = resultSet.getBoolean("stat");
-        }
-        if(isTrue){
-            return true;
-        }
         return false;
     }
+
 
 }

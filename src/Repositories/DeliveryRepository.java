@@ -35,25 +35,7 @@ public class DeliveryRepository {
         preparedStatement.close();
         connection.close();
     }
-    public  void printDeliveryData() throws SQLException {
-        String sql3 = "select city,address,postindex from userinfo ";
-        Connection connection = DatabaseUtil.getConnection();
-        PreparedStatement preparedStatement3 = connection.prepareStatement(sql3);
-        ResultSet resultSet3 = preparedStatement3.executeQuery();
-        while (resultSet3.next()){
 
-            String city = resultSet3.getString("city");
-            String address = resultSet3.getString("address");
-            int postindex = resultSet3.getInt("postindex");
-
-            System.out.println("————————————————————————————————————————————————————————————————————————————————");
-            System.out.println("|City:"+city);
-            System.out.println("|Address:"+address);
-            System.out.println("|PostIndex:"+ postindex);
-            System.out.println("————————————————————————————————————————————————————————————————————————————————");
-
-        }
-    }
     public boolean deliveryMethod(){
         System.out.println("Please choose the shipping method:\n" +
                 "1.Home delivery . Inside the city +2000\n" +

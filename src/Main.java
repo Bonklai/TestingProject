@@ -1,4 +1,4 @@
-import Applications.Application;
+import Applications.RegisterApp;
 import ModelsEntities.User;
 import Utilities.DatabaseUtil;
 
@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         try (Connection connection = DatabaseUtil.getConnection()){
             System.out.println("Connected");
-            Application start = new Application();
+            RegisterApp start = new RegisterApp();
             start.start();
 
         }catch(Exception e){

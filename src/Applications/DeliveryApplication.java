@@ -1,26 +1,30 @@
 package Applications;
 
+import Helpers.CheckDelivery;
+import ModelsEntities.PrintDeliveryData;
 import Repositories.DeliveryRepository;
 
 import java.sql.SQLException;
 import java.util.Scanner;
-import Helpers.Checker;
+
 import ModelsEntities.User;
 
 
 public class DeliveryApplication extends User {
-    Checker checker = new Checker();
+    CheckDelivery checkDelivery = new CheckDelivery();
     Scanner scanner = new Scanner(System.in);
+    PrintDeliveryData printDeliveryData = new PrintDeliveryData();
     DeliveryRepository deliveryRepository = new DeliveryRepository();
 
+
     public void startApp() throws SQLException {
-        if(!checker.checkDelivery()){
+        if(!checkDelivery.checkDelivery()){
             System.out.println("Please register delivery");
             System.out.println("————————————————————————————————————————————————————————————————————————————————");
             deliveryRepository.reg();
         }
         else{
-            deliveryRepository.printDeliveryData();
+            printDeliveryData.printDeliveryData();
             System.out.print("You have already registered your delivery. Do you want edit? y/n:");
             String edit = scanner.next();
             if(edit.equals("y")){

@@ -1,21 +1,19 @@
 package Applications;
 
-import Applications.ApplicationMain;
 import ModelsEntities.UserRepository;
 
 import java.sql.*;
 import java.util.Scanner;
-import Helpers.Checker;
+import Helpers.CheckerRegister;
 
-public class Application extends ApplicationMain {
+public class RegisterApp  {
 
     UserRepository reg = new UserRepository();
-
-
+    ApplicationMain applicationMain = new ApplicationMain();
     Scanner scanner = new Scanner(System.in);
 
     public void start() throws SQLException {
-        Checker temp = new Checker();
+        CheckerRegister temp = new CheckerRegister();
         while(true){
             if (!temp.checkRegister()){
                 System.out.println("You arent registered , please register");
@@ -24,10 +22,10 @@ public class Application extends ApplicationMain {
                 String exit = scanner.next();
                 if( exit.equalsIgnoreCase("Exit")) break;
                 reg.reg();
-                if (startAppMain()) break;}
+                if (applicationMain.startAppMain()) break;}
             else {
                 reg.login();
-                if (startAppMain()) break;
+                if (applicationMain.startAppMain()) break;
 
             }
         }

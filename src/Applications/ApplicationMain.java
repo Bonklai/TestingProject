@@ -3,6 +3,7 @@ package Applications;
 import Controllers.CatalogController;
 
 import ModelsEntities.BalanceManager;
+import ModelsEntities.PrintProfile;
 import ModelsEntities.User;
 import ModelsEntities.UserRepository;
 import Database.DBController;
@@ -40,7 +41,8 @@ public class ApplicationMain extends DBController {
                 break;
             }
             else if (userChoice == 1){
-                userRepository.printProfile();
+                PrintProfile printProfile = new PrintProfile();
+                printProfile.printProfile();
             }
             else if (userChoice == 2){
                 balanceManager.balanceMenu();

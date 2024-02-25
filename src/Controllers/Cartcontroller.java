@@ -3,75 +3,41 @@ package Controllers;
 import java.sql.*;
 import java.util.Scanner;
 import Database.DBController;
+import Getters.GetBalance;
+import Getters.GetTotalPrice;
+import Helpers.CheckDelivery;
 import ModelsEntities.BalanceManager;
+import ModelsEntities.PrintCart;
+import ModelsEntities.PrintData;
 import ModelsEntities.User;
 import Repositories.DeliveryRepository;
-import Helpers.Checker;
+import Helpers.CheckerRegister;
 import Utilities.DatabaseUtil;
 
 public class Cartcontroller extends DBController {
     Scanner scanner = new Scanner(System.in);
 
     BalanceManager balanceManager = new BalanceManager();
+    GetBalance getBalance = new GetBalance();
     DeliveryRepository deliveryRepository = new DeliveryRepository();
-    Checker checker = new Checker();
+    CheckDelivery checkDelivery = new CheckDelivery();
     User user = new User();
+    GetTotalPrice getTotalPrice = new GetTotalPrice();
 
 
     public void cartMenu() throws SQLException {
         System.out.println("Your Cart:");
-        Connection connection = DatabaseUtil.getConnection();
-        Statement statement = connection.createStatement();
-        String sql = "Select * from cart" + user.getId() ;
-        ResultSet resultSet = statement.executeQuery(sql);
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        System.out.println("————————————————————————————————————————————————————————————————————————————————");
-        System.out.println("|Model                 Quantity    price       Indexkey     Detail             |");
-        System.out.println("————————————————————————————————————————————————————————————————————————————————");
-        while (resultSet.next()) {
-            int colCount = resultSet.getMetaData().getColumnCount();
-            for (int i = 1; i <= colCount; i++) {
-                String formattedValue = "";
-                switch (metaData.getColumnType(i)) {
-                    case java.sql.Types.INTEGER:
-                        if (i == colCount) {
-                            formattedValue = String.format("%10d|", resultSet.getInt(i));
-                        } else {
-                            formattedValue = String.format("%10d  |", resultSet.getInt(i));
-                        }
-                        break;
-                    case java.sql.Types.DOUBLE:
-                        formattedValue = String.format("%8.2f  |", resultSet.getDouble(i));
-                        break;
-                    default:
-                        if (i == 1) {
-                            formattedValue = String.format("|%-20s|", resultSet.getString(i));
-                        }
-                        else if(i==5){
-                            formattedValue = String.format("%-20s|", resultSet.getString(i)) ;
-                        }
-                        else {
-                            formattedValue = String.format("%-20s|", resultSet.getString(i));
-                        }
-                        break;
-                }
-                System.out.print(formattedValue);
-            }
-            System.out.println();
-            System.out.println("————————————————————————————————————————————————————————————————————————————————");
-
-
-        }
+        PrintCart printCart = new PrintCart();
+        printCart.printCart();
         totalMenu();
-
     }
     public void totalMenu() throws SQLException {
-        double total = getTotalPrice();
+        double total = getTotalPrice.getTotalPrice();
         if(total>0){
             System.out.println("Total price");
             System.out.println(total);
             System.out.print("Your balance:");
-            System.out.println(balanceManager.getBalance());
+            System.out.println(getBalance.getBalance());
             System.out.println("————————————————————————————————————————————————————————————————————————————————");
             System.out.println("1.Purchase");
             System.out.println("2.Delete a detail");
@@ -86,9 +52,9 @@ public class Cartcontroller extends DBController {
 
                 if (choice.equals("y")){
                     if (deliveryRepository.deliveryMethod()){
-                        if(checker.checkDelivery()){
+                        if(checkDelivery.checkDelivery()){
                             total+=2000;
-                            if(balanceManager.getBalance()>=total){
+                            if(getBalance.getBalance()>=total){
                                 System.out.print("Total:");
                                 System.out.println(total);
                                 balanceManager.pay(total);
@@ -108,8 +74,8 @@ public class Cartcontroller extends DBController {
                         }
                     }
                     else{
-                        if(checker.checkDelivery()){
-                            if(balanceManager.getBalance()>=total){
+                        if(checkDelivery.checkDelivery()){
+                            if(getBalance.getBalance()>=total){
                                 balanceManager.pay(total);
 
                                 System.out.println("Successful purchase");
@@ -148,16 +114,7 @@ public class Cartcontroller extends DBController {
 
         }
     }
-    public double getTotalPrice() throws SQLException {
-        Connection connection = DatabaseUtil.getConnection();
-        Statement statement = connection.createStatement();
-        String getSumSql = "select sum(priceincart) from cart" + user.getId();
-        ResultSet resultSet = statement.executeQuery(getSumSql);
-        if (resultSet.next()){
-            return resultSet.getDouble("sum");
-        }
-        return 0;
-    }
+
 
     public void deleteDetail(int key) throws SQLException {
         String deleteSql = "delete from cart" + user.getId()+ " where indexkeyincart = ?";

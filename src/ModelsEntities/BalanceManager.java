@@ -1,5 +1,6 @@
 package ModelsEntities;
 
+import Getters.GetBalance;
 import Utilities.DatabaseUtil;
 
 import java.sql.*;
@@ -11,27 +12,9 @@ public class BalanceManager {
     public BalanceManager(){
     }
     Scanner scanner = new Scanner(System.in);
-    public double getPrice(String tablename, String choice) throws SQLException {
-        Connection connection = DatabaseUtil.getConnection();
-        Statement statement = connection.createStatement();
-        String buySql = "select price from " + tablename + " where indexkey= " + choice;
-        ResultSet resultSet = statement.executeQuery(buySql);
-        while (resultSet.next()){
-            return resultSet.getDouble("price");
-        }
-        return 0;
-    }
 
-    public  double getBalance() throws SQLException {
-        String balanceData = "select userbalance from userinfo where iduser = '" + user.getId() + "'";
-        Connection connection = DatabaseUtil.getConnection();
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(balanceData);
-        while (resultSet.next()){
-            return  resultSet.getDouble("userbalance");
-        }
-        return 0;
-    }
+
+
 
     public void addBalance(double amount) throws SQLException {
 
@@ -44,8 +27,9 @@ public class BalanceManager {
     }
 
     public void balanceMenu() throws SQLException {
+        GetBalance getBalance = new GetBalance();
         System.out.println("————————————————————————————————————————————————————————————————————————————————");
-        System.out.println("Your balance:"+getBalance());
+        System.out.println("Your balance:"+getBalance.getBalance());
         System.out.println("————————————————————————————————————————————————————————————————————————————————");
         System.out.println("1.Top up your balance");
         System.out.println("2.Back");

@@ -3,12 +3,15 @@ package Controllers;
 import java.sql.*;
 import java.util.Scanner;
 import Database.DBController;
-import Helpers.Checker;
+import Helpers.CheckStatus;
+import Helpers.CheckerRegister;
+import ModelsEntities.PrintTable;
 
 public class CatalogController extends DBController {
     public CatalogController(){}
-    Checker checker = new Checker();
+    CheckStatus checkStatus = new CheckStatus();
     Scanner scanner = new Scanner(System.in);
+    PrintTable printTable = new PrintTable();
 
 
     public void startCatalog() throws SQLException {
@@ -26,39 +29,47 @@ public class CatalogController extends DBController {
         System.out.print("Option:");
         int option = scanner.nextInt();
         boolean accessAdmin = false;
-        if(checker.checkStatus() ){
+        if(checkStatus.checkStatus() ){
             System.out.println("0.Manage catalog");
             accessAdmin = true;
         }
 
         if(option == 1) {
 
-            printTable("batteriesforiphone");
-
+            printTable.printTable("batteriesforiphone");
+            buyPanel("batteriesforiphone");
         }
         else if(option==2){
-            printTable("displayforiphone");
+            printTable.printTable("displayforiphone");
+            buyPanel("displayforiphone");
         }
         else if(option == 3){
-            printTable("glassforiphone3in1");
+            printTable.printTable("glassforiphone3in1");
+            buyPanel("glassforiphone3in1");
         }
         else if(option == 4){
-            printTable("touchglassipad");
+            printTable.printTable("touchglassipad");
+            buyPanel("touchglassipad");
         }
         else if(option == 5){
-            printTable("displayonipad");
+            printTable.printTable("displayonipad");
+            buyPanel("displayonipad");
         }
         else if(option == 6){
-            printTable("batteryforipad");
+            printTable.printTable("batteryforipad");
+            buyPanel("batteryforipad");
         }
         else if(option == 7){
-            printTable("batteryformacbook");
+            printTable.printTable("batteryformacbook");
+            buyPanel("batteryformacbook");
         }
         else if(option == 8){
-            printTable("matricesformacbook");
+            printTable.printTable("matricesformacbook");
+            buyPanel("matricesformacbook");
         }
         else if(option == 9){
-            printTable("keyboardsformacbook");
+            printTable.printTable("keyboardsformacbook");
+            buyPanel("matricesformacbook");
         }
         else if(option == 0){
             System.out.println("————————————————————————————————————————————————————————————————————————————————");

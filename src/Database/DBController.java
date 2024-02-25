@@ -1,95 +1,37 @@
 package Database;
 
-import Helpers.Checker;
+import Getters.GetBalance;
+import Getters.GetPrice;
+import Helpers.CheckStatus;
+import Helpers.CheckerRegister;
 import ModelsEntities.BalanceManager;
+import ModelsEntities.PrintOneDetail;
+import ModelsEntities.PrintTable;
 import ModelsEntities.User;
 import Utilities.DatabaseUtil;
 
 import java.sql.*;
-import java.util.Optional;
 import java.util.Scanner;
 
-public class DBController extends BalanceManager {
+public class DBController  {
 
     User user = new User();
+    GetBalance getBalance = new GetBalance();
+    PrintOneDetail printOneDetail = new PrintOneDetail();
 
 
     Scanner scanner = new Scanner(System.in);
 
 
-    public void printTable(String tablename) throws SQLException {
-        Connection connection = DatabaseUtil.getConnection();
-        Statement statement = connection.createStatement();
-        String sql = "Select * from " + tablename + " order by indexkey asc";
-        ResultSet resultSet = statement.executeQuery(sql);
-        ResultSetMetaData metaData = resultSet.getMetaData();
 
 
-        System.out.println("————————————————————————————————————————————————————————————————————————————————");
-        System.out.println("|Model                 Quantity    price       Indexkey     Detail             |");
-        System.out.println("————————————————————————————————————————————————————————————————————————————————");
-        while (resultSet.next()) {
-            int colCount = resultSet.getMetaData().getColumnCount();
-            for (int i = 1; i <= colCount; i++) {
-                String formattedValue = "";
-                switch (metaData.getColumnType(i)) {
-                    case java.sql.Types.INTEGER:
-                        if (i == colCount) {
-                            formattedValue = String.format("%10d|", resultSet.getInt(i));
-                        } else {
-                            formattedValue = String.format("%10d  |", resultSet.getInt(i));
-                        }
-                        break;
-                    case java.sql.Types.DOUBLE:
-                        formattedValue = String.format("%8.2f  |", resultSet.getDouble(i));
-                        break;
-                    default:
-                        if (i == 1) {
-                            formattedValue = String.format("|%-20s|", resultSet.getString(i));
-                        }
-                        else if( i == 5 ){
-                            formattedValue = String.format("%-20s|", resultSet.getString(i)) ;
-                        }
-
-                        else {
-                            formattedValue = String.format("%-20s|", resultSet.getString(i));
-                        }
-                        break;
-                }
-                System.out.print(formattedValue);
-            }
-            System.out.println();
-            System.out.println("————————————————————————————————————————————————————————————————————————————————");
-        }
-        buyPanel(tablename);
-
-
-    }
-    public void printOneDetail(String tablename,String indexkey) throws SQLException {
-
-        Connection connection = DatabaseUtil.getConnection();
-        Statement statement = connection.createStatement();
-        String buySql = "select * from " + tablename + " where indexkey= " + indexkey;
-        ResultSet resultSet = statement.executeQuery(buySql);
-        if(resultSet.next()){
-            System.out.println("————————————————————————————————————————————————————————————————————————————————");
-            System.out.println("|Model                 Quantity    price       Indexkey     Detail             |");
-            System.out.println("————————————————————————————————————————————————————————————————————————————————");
-            System.out.printf("|%-20s|", resultSet.getString("model"));
-            System.out.printf("%10d  |", resultSet.getInt("quantity"));
-            System.out.printf("%8.2f  |", resultSet.getDouble("price"));
-            System.out.printf("%10d|",resultSet.getInt("indexkey"));
-            System.out.printf("%-22s|", resultSet.getString("item"));
-            System.out.println();
-            System.out.println("————————————————————————————————————————————————————————————————————————————————");
-        }
-    }
 
     public void buyPanel(String tablename) throws SQLException {
+        GetPrice getPrice = new GetPrice();
         Connection connection = DatabaseUtil.getConnection();
         Statement statement = connection.createStatement();
-        Checker checker = new Checker();
-        if(checker.checkStatus()){
+        CheckStatus checkStatus = new CheckStatus();
+        if(checkStatus.checkStatus()){
             manageDatabaseMenu(tablename);
         }
         else{
@@ -100,9 +42,10 @@ public class DBController extends BalanceManager {
 
             }
             else{
-                printOneDetail(tablename,choice);
-                System.out.print("Balance:"); System.out.println(getBalance());
-                System.out.print("Price:"); System.out.println(getPrice(tablename,choice));
+
+                printOneDetail.printOneDetail(tablename,choice);
+                System.out.print("Balance:"); System.out.println(getBalance.getBalance());
+                System.out.print("Price:"); System.out.println(getPrice.getPrice(tablename,choice));
                 System.out.print("Are you sure you want to add this product to cart? y/n:");
                 String choice2 = scanner.next();
 
@@ -205,7 +148,7 @@ public class DBController extends BalanceManager {
         String index = scanner.next();
         if(index.equals("0")){}
         else{
-            printOneDetail(tablename,index);
+            printOneDetail.printOneDetail(tablename,index);
             System.out.print("Enter quantity:");
             String quantity = scanner.next();
             if(quantity.matches("^\\d+$")){
@@ -231,7 +174,7 @@ public class DBController extends BalanceManager {
         String index = scanner.next();
         if (index.equals("0")){}
         else{
-            printOneDetail(tablename,index);
+            printOneDetail.printOneDetail(tablename,index);
             System.out.print("Enter price:");
             String price = scanner.next();
             if(price.matches("^\\d+$")){
@@ -266,7 +209,8 @@ public class DBController extends BalanceManager {
         System.out.println("————————————————————————————————————————————————————————————————————————————————");
         connection.close();
         preparedStatement.close();
-        printTable(tablename);
+        PrintTable printTable = new PrintTable();
+        printTable.printTable(tablename);
 
 
     }
