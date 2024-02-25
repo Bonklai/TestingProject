@@ -1,4 +1,5 @@
 import Applications.RegisterApp;
+import Database.TruncateTempId;
 import ModelsEntities.User;
 import Utilities.DatabaseUtil;
 
@@ -11,14 +12,11 @@ public class Main {
             System.out.println("Connected");
             RegisterApp start = new RegisterApp();
             start.start();
-
         }catch(Exception e){
-            User user = new User();
-            user.truncateTempId();
+            TruncateTempId truncateTempId = new TruncateTempId();
+            truncateTempId.truncateTempId();
             System.out.println("Couldn't connect with database");
             System.out.println(e.getMessage());
             e.printStackTrace();
-            System.out.println();
-        }
-    }
+            System.out.println();}}
 }

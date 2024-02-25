@@ -11,7 +11,7 @@ import ModelsEntities.User;
 
 
 public class DeliveryApplication extends User {
-    private CheckDelivery checkDelivery = new CheckDelivery();
+    private CheckDelivery checkDelivery = CheckDelivery.getInstance();
     private Scanner scanner = new Scanner(System.in);
     private PrintDeliveryData printDeliveryData = new PrintDeliveryData();
     private final DeliveryRepository deliveryRepository = new DeliveryRepository();

@@ -2,10 +2,8 @@ package Applications;
 
 import Controllers.CatalogController;
 
-import ModelsEntities.BalanceManager;
-import ModelsEntities.PrintProfile;
-import ModelsEntities.User;
-import ModelsEntities.UserRepository;
+import Database.TruncateTempId;
+import ModelsEntities.*;
 import Database.DBController;
 import Controllers.Cartcontroller;
 
@@ -15,10 +13,11 @@ import java.util.Scanner;
 public class ApplicationMain extends DBController {
     UserRepository userRepository = new UserRepository();
     Scanner scanner = new Scanner(System.in);
-    BalanceManager balanceManager = new BalanceManager();
+
     CatalogController catalogController = new CatalogController();
     Cartcontroller cartcontroller = new Cartcontroller();
     DeliveryApplication deliveryApplication = new DeliveryApplication();
+    BalanceMenu balanceMenu = new BalanceMenu();
 
 
     public boolean startAppMain() throws SQLException {
@@ -45,14 +44,14 @@ public class ApplicationMain extends DBController {
                 printProfile.printProfile();
             }
             else if (userChoice == 2){
-                balanceManager.balanceMenu();
+                balanceMenu.balanceMenu();
             }
             else if (userChoice == 3){
                 catalogController.startCatalog();
             }
             else if(userChoice == 6){
-                User user = new User();
-                user.truncateTempId();
+                TruncateTempId truncateTempId = new TruncateTempId();
+                truncateTempId.truncateTempId();
                 return true;
             } else if (userChoice == 4){
                 cartcontroller.cartMenu();

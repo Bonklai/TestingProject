@@ -1,6 +1,8 @@
 package ModelsEntities;
 
 import Controllers.CartCreate;
+import Database.SetId;
+import Database.TruncateTempId;
 import Helpers.CheckStatus;
 import Helpers.CheckerRegister;
 import Utilities.DatabaseUtil;
@@ -11,6 +13,7 @@ import java.util.Scanner;
 public class UserRepository extends User {
 
     Scanner scanner = new Scanner(System.in);
+    SetId setId = new SetId();
 
     public void reg() throws SQLException {
 
@@ -47,7 +50,7 @@ public class UserRepository extends User {
             System.out.println("User didn't created");
             System.out.println("————————————————————————————————————————————————————————————————————————————————");
         }
-        setId(inputemail);
+        setId.setId(inputemail);
         connection.close();
     }
 
@@ -56,11 +59,11 @@ public class UserRepository extends User {
         Connection conn = DatabaseUtil.getConnection();
         String sql2 = "Delete from userinfo where iduser = '" + getId() + "'";
         String sql3 = "Drop table cart"+getId() + " cascade;";
-        truncateTempId();
+        TruncateTempId truncateTempId = new TruncateTempId();
+        truncateTempId.truncateTempId();
         Statement statement = conn.createStatement();
         statement.execute(sql2);
         statement.execute(sql3);
-
         System.out.println("User deleted successfully!");
         System.out.println("————————————————————————————————————————————————————————————————————————————————");
         conn.close();
@@ -89,7 +92,7 @@ public class UserRepository extends User {
                     String em = resultSet.getString("useremail");
                     String pass = resultSet.getString("userpass");
                     if (emailInput.equals(em) && passwordInput.equals(pass)) {
-                        setId(emailInput);
+                        setId.setId(emailInput);
                         CheckStatus checkStatus = new CheckStatus();
 
                         if(checkStatus.checkStatus()){
