@@ -8,7 +8,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class CheckDelivery implements Checker {
-    public CheckDelivery(){}
+    private static CheckDelivery instance;
+
+    public CheckDelivery() {}
+
+    public static CheckDelivery getInstance() {
+        if (instance == null) {
+            instance = new CheckDelivery();
+        }
+        return instance;
+    }
 
     @Override
     public boolean checkRegister() throws SQLException {

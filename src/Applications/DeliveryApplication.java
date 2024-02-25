@@ -11,10 +11,10 @@ import ModelsEntities.User;
 
 
 public class DeliveryApplication extends User {
-    CheckDelivery checkDelivery = new CheckDelivery();
-    Scanner scanner = new Scanner(System.in);
-    PrintDeliveryData printDeliveryData = new PrintDeliveryData();
-    DeliveryRepository deliveryRepository = new DeliveryRepository();
+    private CheckDelivery checkDelivery = new CheckDelivery();
+    private Scanner scanner = new Scanner(System.in);
+    private PrintDeliveryData printDeliveryData = new PrintDeliveryData();
+    private final DeliveryRepository deliveryRepository = new DeliveryRepository();
 
 
     public void startApp() throws SQLException {
@@ -37,4 +37,5 @@ public class DeliveryApplication extends User {
             }
         }
     }
+
 }
